@@ -1,0 +1,41 @@
+
+<NowPlayingBox@BoxLayout>:
+    orientation: 'vertical'
+    Label:
+        id: np_title
+        text: root.title if hasattr(root,'title') else 'Now Playing'
+        size_hint_y: None
+        height: '28dp'
+    Label:
+        id: np_artist
+        text: root.artist if hasattr(root,'artist') else ''
+        size_hint_y: None
+        height: '20dp'
+
+<SearchResults>:
+    BoxLayout:
+        orientation: 'vertical'
+        ScrollView:
+            GridLayout:
+                id: results_grid
+                cols:1
+                size_hint_y: None
+                height: self.minimum_height
+
+<GenresGrid>:
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            cols:3
+            size_hint_y: None
+            height: self.minimum_height
+
+<KaraokeLyrics>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: lyric_line
+            text: 'Lyrics will appear here...'
+            font_size: '36sp'
+            halign: 'center'
+            valign: 'middle'

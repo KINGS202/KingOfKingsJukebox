@@ -1,0 +1,110 @@
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+<KingScreenManager>:
+    transition: SlideTransition()
+
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgba: .06,.07,.08,1
+            Rectangle:
+                pos: self.pos; size: self.size
+        BoxLayout:
+            size_hint_y: None
+            height: '64dp'
+            padding: 10
+            spacing: 10
+            Label:
+                text: app.settings.get('app_name','KingOfKings')
+                font_size: '24sp'
+                color: 1,0.82,0,1
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 10
+            padding: 10
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: .65
+                Label:
+                    text: 'Featured Playlists'
+                    bold: True
+                ScrollView:
+                    GridLayout:
+                        cols:1; size_hint_y: None; height: self.minimum_height; row_default_height: '52dp'
+                        Button:
+                            text: 'Top Hits'
+                            on_release: app.root.current = 'genres'
+                        Button:
+                            text: 'African Hits'
+                            on_release: app.root.current = 'genres'
+                        Button:
+                            text: 'Karaoke Stars'
+                            on_release: app.root.current = 'karaoke'
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: .35
+                Label:
+                    text: 'Now Playing'
+                    bold: True
+                Label:
+                    id: now_playing
+                    text: 'Nothing'
+                    size_hint_y: None; height: '140dp'
+                BoxLayout:
+                    size_hint_y: None; height: '48dp'
+                    Button:
+                        text: 'Play Sample'
+                        on_release:
+                            app.playlist.add(os.path.join('media','songs','sample_track.mp3'))
+                            if app.player.state != 'playing':
+                                nxt = app.playlist.pop_next()
+                                if nxt: app.player.play(nxt)
+                    Button:
+                        text: 'Stop'
+                        on_release: app.player.stop()
+
+<SearchScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        TextInput:
+            id: search_box
+            size_hint_y: None
+            height: '48dp'
+            hint_text: 'Search for tracks or artists'
+        BoxLayout:
+            size_hint_y: None; height: '48dp'
+            Button:
+                text: 'Search'
+                on_release:
+                    app.root.current = 'home'
+        ScrollView:
+            GridLayout:
+                id: search_results; cols:1; size_hint_y: None; height: self.minimum_height
+
+<GenreScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Genres'
+
+<KaraokeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Karaoke Mode'
+
+<AdminScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        Label:
+            text: 'Admin Panel - secure'
+        Button:
+            text: 'Scan Library'
+            on_release: app.scanner.full_scan()
+
+
+#:import NowPlayingBox __main__.NowPlayingBox

@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head><meta charset='utf-8'><title>KingOfKings Admin</title></head>
+<body style='background:#081020;color:#fff;font-family:Arial;padding:20px'>
+<h1>KingOfKings Admin (React-lite)</h1>
+<div>
+  <input id='admin_key' placeholder='admin key' />
+  <button onclick='getToken()'>Login</button>
+  <div id='status'></div>
+</div>
+<div style='margin-top:12px'>
+  <input id='search_q' placeholder='Search library' />
+  <button onclick='doSearch()'>Search</button>
+  <div id='results'></div>
+</div>
+<div style='margin-top:12px'>
+  <input id='play_path' placeholder='Full path to media file' style='width:60%' />
+  <button onclick='playNow()'>Play Now (admin)</button>
+</div>
+<script>
+let token = null;
+async function getToken(){
+  const key = document.getElementById('admin_key').value;
+  const r = await fetch('/token',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({admin_key:key})});
+  const j = await r.json();
+  if (j.token){ token=j.token; localStorage.setItem('kok_token', token); document.getElementById('status').innerText='Logged in'; }
+  else { document.getElementById('status').innerText = JSON.stringify(j); }
+}
+async function doSearch(){
+  const q = document.getElementById('search_q').value;
+  const r = await fetch('/api/search?q='+encodeURIComponent(q));
+  const j = await r.json();
+  const el = document.getElementById('results'); el.innerHTML='';
+  (j.results||[]).forEach(p=>{ const d=document.createElement('div'); d.innerText=p; el.appendChild(d); });
+}
+async function playNow(){
+  const p = document.getElementById('play_path').value;
+  const r = await fetch('/api/play', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({path:p})});
+  const j = await r.json(); alert(JSON.stringify(j));
+}
+</script>
+</body>
+</html>
