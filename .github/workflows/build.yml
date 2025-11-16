@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: King Of Kings Jukebox – Full Build
 
 on:
   workflow_dispatch:
@@ -11,25 +11,44 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python
+    - name: Install Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: "3.10"
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip wheel setuptools
         pip install pyinstaller
         pip install kivy
         pip install pillow
         pip install pygame
+        pip install numpy
 
-    - name: Build EXE
+    - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --onefile --windowed main.py
+        pyinstaller main.py ^
+        --name "KingOfKingsJukebox" ^
+        --windowed ^
+        --noconsole ^
+        --onefile ^
+        --icon=icon.ico ^
+        --add-data "main.kv;." ^
+        --add-data "extra.kv;." ^
+        --add-data "theme_manager.kv;." ^
+        --add-data "settings.json;." ^
+        --add-data "sample_track.mp3;." ^
+        --add-data "index.html;." ^
+        --collect-all kivy
 
-    - name: Upload EXE Artifact
+    - name: Create ZIP Package
+      run: |
+        powershell Compress-Archive -Path dist\KingOfKingsJukebox.exe -DestinationPath KingOfKingsJukebox_Full.zip
+
+    - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: KingOfKingsJukebox
-        path: dist/main.exe
+        name: KingOfKingsJukebox_Full_Build
+        path: |
+          dist/KingOfKingsJukebox.exe
+          KingOfKingsJukebox_Full.zip
